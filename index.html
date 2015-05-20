@@ -1,27 +1,45 @@
 <!doctype html>
 <html lang='en-GB'>
 <head>
+  <link rel="stylesheet" href="css/foundation.css">
   <meta charset='utf-8'>
   <title>Open Weathermap</title>
 </head>
 
 <body>
   <h1>Open Weathermap</h1>
-  
   <div class='weatherDisplay'>
       <span>Location: </span><span data-bind='text: location'></span><br />
       <span>Time: </span><span data-bind='text: time'></span><br />
-      <span>Temperature: </span><span data-bind='text: temperature'></span><br />   
+      <span>Temperature: </span><span data-bind='text: temperature'></span><br />
+      <h1>Forecast</h1>
+      <table>
+        <thead>
+            <tr><th>Time</th><th>Temperature</th></tr>
+        </thead>
+        <tbody data-bind="foreach: foreCasts">
+            <tr>
+                <td data-bind="text: dt_txt"></td>
+                <td data-bind="text: (main.temp - 273.15).toFixed(1)"></td>
+            </tr>
+        </tbody>
+    </table>   
   </div>
 
-  <script src="jquery-1.11.3.min.js"></script>
-  <script src="jquery-migrate-1.2.1.min.js"></script>
-  <script type='text/javascript' src='knockout-3.3.0.js'></script>
+  <canvas id="myChart" style="width: 80%; height: 400px"></canvas>
+
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script src="js/jquery-migrate-1.2.1.min.js"></script>
+  <script type='text/javascript' src='js/knockout-3.3.0.js'></script>
+  <script src="js/vendor/modernizr.js"></script>
+  <script type='text/javascript' src='js/foundation.min.js'></script>
+  <script type='text/javascript' src='js/Chart.js'></script>
   <script type="text/javascript">
     var ViewModel = function() {
         this.location = ko.observable("Loading...");
         this.temperature = ko.observable("Loading...");
         this.time = ko.observable("Loading...");
+        this.foreCasts = ko.observableArray();
     };
     
     var viewModel = new ViewModel();
@@ -35,7 +53,48 @@
       });  
     };
     
+    var reloadForecast = function() {
+        var openWeathermapUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=59.338046&lon=14.942071";
+        $.getJSON(openWeathermapUrl, function(data) { 
+          
+          data.list.forEach(function(element) {
+            viewModel.foreCasts.push(element);   
+          });
+          
+          var labels = [];
+          var dataPoints = [];
+          data.list.slice(0, 10).forEach(function(element){
+            labels.push(element.dt_txt);
+            dataPoints.push((element.main.temp - 273.15));
+          });
+          
+          var chartData = {
+              labels: labels,
+              datasets: [
+                  {
+                      label: "My First dataset",
+                      fillColor: "rgba(220,220,220,0.2)",
+                      strokeColor: "rgba(220,220,220,1)",
+                      pointColor: "rgba(220,220,220,1)",
+                      pointStrokeColor: "#fff",
+                      pointHighlightFill: "#fff",
+                      pointHighlightStroke: "rgba(220,220,220,1)",
+                      data: dataPoints
+                  }
+              ]
+          };
+              
+          var ctx = document.getElementById("myChart").getContext("2d");
+          var myNewChart = new Chart(ctx).Line(chartData, {
+            scaleBeginAtZero: true,
+            animationEasing: "easeOutQuart",
+          });
+    
+        });
+     };
+    
     reloadWeatherData();
+    reloadForecast();
     ko.applyBindings(viewModel);
     setInterval(reloadWeatherData, 5000);
   </script>
