@@ -3,6 +3,7 @@
         this.location = ko.observable("Loading...");
         this.temperature = ko.observable("Loading...");
         this.time = ko.observable("Loading...");
+        this.weatherstatus = ko.observable("Loading...");
         this.foreCasts = ko.observableArray();
     };
     
@@ -14,6 +15,7 @@
         viewModel.location(data.name);
         viewModel.temperature((data.main.temp - 273.15).toFixed(1));
         viewModel.time(moment(new Date()).format('YYYY-MM-DD HH:mm'));
+        viewModel.weatherstatus(data.weather[0].description);
       });  
     };
     
