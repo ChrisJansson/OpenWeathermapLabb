@@ -14,7 +14,7 @@
       $.getJSON(openWeathermapUrl, function(data) { 
         viewModel.location(data.name);
         viewModel.temperature((data.main.temp - 273.15).toFixed(1));
-        viewModel.time(moment(new Date()).format('YYYY-MM-DD HH:mm'));
+        viewModel.time(moment().format('dddd HH:mm'));
         viewModel.weatherstatus(data.weather[0].description);
       });  
     };
