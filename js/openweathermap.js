@@ -1,4 +1,6 @@
 
+    moment.locale('sv');
+    
     var ViewModel = function() {
         this.location = ko.observable("Loading...");
         this.temperature = ko.observable("Loading...");
@@ -30,7 +32,7 @@
           var labels = [];
           var dataPoints = [];
           data.list.slice(0, 10).forEach(function(element){
-            labels.push(moment(element.dt_txt).format('YYYY-MM-DD HH:mm'));
+            labels.push(moment(element.dt_txt).format('ddd D MMM HH:mm', 'sv'));
             dataPoints.push((element.main.temp - 273.15).toFixed(1));
           });
           

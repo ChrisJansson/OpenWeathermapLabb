@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang='en-GB'>
+<html lang='sv-SE'>
 <head>
   <link rel="stylesheet" href="css/foundation.min.css">
   <script src="js/vendor/modernizr.js"></script>
@@ -41,7 +41,7 @@
           </thead>
           <tbody data-bind="foreach: foreCasts">
               <tr>
-                  <td data-bind="text: moment(dt_txt).format('YYYY-MM-DD HH:mm')"></td>
+                  <td data-bind="text: moment(dt_txt).format('ddd D MMM HH:mm', 'sv')"></td>
                   <td data-bind="text: (main.temp - 273.15).toFixed(1)"></td>
               </tr>
           </tbody>
