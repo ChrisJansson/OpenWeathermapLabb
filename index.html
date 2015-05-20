@@ -18,7 +18,6 @@
   <script src="jquery-migrate-1.2.1.min.js"></script>
   <script type='text/javascript' src='knockout-3.3.0.js'></script>
   <script type="text/javascript">
-    // Here's my data model
     var ViewModel = function() {
         this.location = ko.observable("Loading...");
         this.temperature = ko.observable("Loading...");
@@ -30,8 +29,6 @@
     var reloadWeatherData = function() {
       var openWeathermapUrl = "http://api.openweathermap.org/data/2.5/weather?lat=59.338046&lon=14.942071";
       $.getJSON(openWeathermapUrl, function(data) { 
-      // Now use this data to update your view models, 
-      // and Knockout will update your UI automatically
         viewModel.location(data.name);
         viewModel.temperature((data.main.temp - 273.15).toFixed(1));
         viewModel.time(new Date().toISOString());
@@ -39,7 +36,7 @@
     };
     
     reloadWeatherData();
-    ko.applyBindings(viewModel); // This makes Knockout get to work
+    ko.applyBindings(viewModel);
     setInterval(reloadWeatherData, 5000);
   </script>
 </body>
