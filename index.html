@@ -1,102 +1,56 @@
 <!doctype html>
 <html lang='en-GB'>
 <head>
-  <link rel="stylesheet" href="css/foundation.css">
+  <link rel="stylesheet" href="css/foundation.min.css">
+  <script src="js/vendor/modernizr.js"></script>
+  <script src="js/vendor/jquery.js"></script>
+  <script src="js/vendor/fastclick.js"></script>
+  <script src="js/foundation.min.js"></script>
+  <script type='text/javascript' src='js/knockout-3.3.0.js'></script>
+  <script type='text/javascript' src='js/Chart.js'></script>
+    <script type='text/javascript' src='js/moment.js'></script>
   <meta charset='utf-8'>
   <title>Open Weathermap</title>
 </head>
 
-<body>
-  <h1>Open Weathermap</h1>
-  <div class='weatherDisplay'>
-      <span>Location: </span><span data-bind='text: location'></span><br />
-      <span>Time: </span><span data-bind='text: time'></span><br />
-      <span>Temperature: </span><span data-bind='text: temperature'></span><br />
-      <h1>Forecast</h1>
-      <table>
-        <thead>
-            <tr><th>Time</th><th>Temperature</th></tr>
-        </thead>
-        <tbody data-bind="foreach: foreCasts">
-            <tr>
-                <td data-bind="text: dt_txt"></td>
-                <td data-bind="text: (main.temp - 273.15).toFixed(1)"></td>
-            </tr>
-        </tbody>
-    </table>   
+<body stytle="margin:10px">
+  <div style="margin: 10px">
+    <h1>Open weather map lab</h1>
+    <h3 class="subheader">Current weather in Ånnaboda</h1>
+    <span class="label">Location:</span><span style="margin-left: 5px" data-bind='text: location'></span><br />
+    <span class="label">Time:</span><span style="margin-left: 5px" data-bind='text: time'></span><br />
+    <span class="label">Temperature:</span><span style="margin-left: 5px" data-bind='text: temperature'></span><br />
   </div>
 
-  <canvas id="myChart" style="width: 80%; height: 400px"></canvas>
-
-  <script src="js/jquery-1.11.3.min.js"></script>
-  <script src="js/jquery-migrate-1.2.1.min.js"></script>
-  <script type='text/javascript' src='js/knockout-3.3.0.js'></script>
-  <script src="js/vendor/modernizr.js"></script>
-  <script type='text/javascript' src='js/foundation.min.js'></script>
-  <script type='text/javascript' src='js/Chart.js'></script>
-  <script type="text/javascript">
-    var ViewModel = function() {
-        this.location = ko.observable("Loading...");
-        this.temperature = ko.observable("Loading...");
-        this.time = ko.observable("Loading...");
-        this.foreCasts = ko.observableArray();
-    };
-    
-    var viewModel = new ViewModel();
-    
-    var reloadWeatherData = function() {
-      var openWeathermapUrl = "http://api.openweathermap.org/data/2.5/weather?lat=59.338046&lon=14.942071";
-      $.getJSON(openWeathermapUrl, function(data) { 
-        viewModel.location(data.name);
-        viewModel.temperature((data.main.temp - 273.15).toFixed(1));
-        viewModel.time(new Date().toISOString());
-      });  
-    };
-    
-    var reloadForecast = function() {
-        var openWeathermapUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=59.338046&lon=14.942071";
-        $.getJSON(openWeathermapUrl, function(data) { 
-          
-          data.list.forEach(function(element) {
-            viewModel.foreCasts.push(element);   
-          });
-          
-          var labels = [];
-          var dataPoints = [];
-          data.list.slice(0, 10).forEach(function(element){
-            labels.push(element.dt_txt);
-            dataPoints.push((element.main.temp - 273.15));
-          });
-          
-          var chartData = {
-              labels: labels,
-              datasets: [
-                  {
-                      label: "My First dataset",
-                      fillColor: "rgba(220,220,220,0.2)",
-                      strokeColor: "rgba(220,220,220,1)",
-                      pointColor: "rgba(220,220,220,1)",
-                      pointStrokeColor: "#fff",
-                      pointHighlightFill: "#fff",
-                      pointHighlightStroke: "rgba(220,220,220,1)",
-                      data: dataPoints
-                  }
-              ]
-          };
-              
-          var ctx = document.getElementById("myChart").getContext("2d");
-          var myNewChart = new Chart(ctx).Line(chartData, {
-            scaleBeginAtZero: true,
-            animationEasing: "easeOutQuart",
-          });
-    
-        });
-     };
-    
-    reloadWeatherData();
-    reloadForecast();
-    ko.applyBindings(viewModel);
-    setInterval(reloadWeatherData, 5000);
+<div style="margin: 20px">
+  <ul class="tabs" data-tab>
+    <li class="tab-title active"><a href="#panel1">Forecast graph</a></li>
+    <li class="tab-title"><a href="#panel2">Forecast</a></li>
+  </ul>
+  <div class="tabs-content">
+    <div class="content active" id="panel1">
+      <h2 class="subheader">Forecast graph</h1>
+      <canvas id="myChart" style="width: 80%; height: 400px"></canvas>
+    </div>
+    <div class="content" id="panel2">
+      <h2 class="subheader">Forecast</h1>
+        <table>
+          <thead>
+              <tr><th>Time</th><th>Temperature</th></tr>
+          </thead>
+          <tbody data-bind="foreach: foreCasts">
+              <tr>
+                  <td data-bind="text: moment(dt_txt).format('YYYY-MM-DD HH:mm')"></td>
+                  <td data-bind="text: (main.temp - 273.15).toFixed(1)"></td>
+              </tr>
+          </tbody>
+        </table>   
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).foundation();
   </script>
+  <script type='text/javascript' src='js/openweathermap.js'></script>
 </body>
 </html>
