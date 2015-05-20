@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang='en-GB'>
+<head>
+  <meta charset='utf-8'>
+  <title>Open Weathermap</title>
+</head>
+
+<body>
+  <h1>Open Weathermap</h1>
+  
+  <div class='weatherDisplay'>
+      <span>Location: </span><span data-bind='text: location'></span><br />
+      <span>Time: </span><span data-bind='text: time'></span><br />
+      <span>Temperature: </span><span data-bind='text: temperature'></span><br />   
+  </div>
+
+  <script src="jquery-1.11.3.min.js"></script>
+  <script src="jquery-migrate-1.2.1.min.js"></script>
+  <script type='text/javascript' src='knockout-3.3.0.js'></script>
+  <script type="text/javascript">
+    // Here's my data model
+    var ViewModel = function() {
+        this.location = ko.observable("Loading...");
+        this.temperature = ko.observable("Loading...");
+        this.time = ko.observable("Loading...");
+    };
+    
+    var viewModel = new ViewModel();
+    
+    var reloadWeatherData = function() {
+      var openWeathermapUrl = "http://api.openweathermap.org/data/2.5/weather?lat=59.338046&lon=14.942071";
+      $.getJSON(openWeathermapUrl, function(data) { 
+      // Now use this data to update your view models, 
+      // and Knockout will update your UI automatically
+        viewModel.location(data.name);
+        viewModel.temperature((data.main.temp - 273.15).toFixed(1));
+        viewModel.time(new Date().toISOString());
+      });  
+    };
+    
+    reloadWeatherData();
+    ko.applyBindings(viewModel); // This makes Knockout get to work
+    setInterval(reloadWeatherData, 5000);
+  </script>
+</body>
+</html>
